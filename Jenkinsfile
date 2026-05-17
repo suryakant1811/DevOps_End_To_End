@@ -21,5 +21,26 @@ pipeline {
                 sh "docker build -f docker/Frontend-Dockerfile -t suryasuraj/psfrontend:${BUILD_NUMBER} frontend"
             }
         }
+
+       stage("Push Images") {
+    
+        steps {
+            withCredentials([
+                usernamePassword(
+                    credentialsId: 'dockerhub_cred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )
+            ]) 
+            {
+                sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push suryasuraj/psbackend:${BUILD_NUMBER}
+                    docker push suryasuraj/psfrontend:${BUILD_NUMBER}
+                '''
+        }
+    }
+}
+
     }
 }
