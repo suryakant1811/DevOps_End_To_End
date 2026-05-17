@@ -42,12 +42,27 @@ pipeline {
             }
         }  
 
-        stage("Deploy to Kubernetes") {
-            steps {
-                echo 'Deploying to Kubernetes now and the quto apply is not working'
+        stage("tst"){
+            steps{
+                echo "working"
             }
+        }
 
-        } 
+        // stage("Deploy to Kubernetes") {
+        //     steps {
+        //         sh '''
+        //         kubectl set image deployment/backend-deployment \
+        //         backend=suryasuraj/psbackend:${BUILD_NUMBER} -n default
+
+        //         kubectl set image deployment/frontend-deployment \
+        //         frontend=suryasuraj/psfrontend:${BUILD_NUMBER} -n default
+
+        //         kubectl rollout status deployment/backend-deployment -n default
+
+        //         kubectl rollout status deployment/frontend-deployment -n default
+        //     '''
+        // }
+    }
 
     }
 }
