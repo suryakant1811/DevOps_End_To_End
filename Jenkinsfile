@@ -38,9 +38,17 @@ pipeline {
                     docker push suryasuraj/psbackend:${BUILD_NUMBER}
                     docker push suryasuraj/psfrontend:${BUILD_NUMBER}
                 '''
-        }
-    }
-}
+                }
+            }
+        }  
+
+        stage("Deploy to Kubernetes") {
+            steps {
+                echo 'Deploying to Kubernetes'
+
+            }
+
+        } 
 
     }
 }
