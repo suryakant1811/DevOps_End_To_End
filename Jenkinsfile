@@ -44,7 +44,7 @@ pipeline {
 
         stage("Deploy to Kubernetes") {
             steps {
-                echo 'Deploying to Kubernetes'
+                echo 'Deploying to Kubernetes now'
 
             }
 
