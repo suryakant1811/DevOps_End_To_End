@@ -44,8 +44,7 @@ pipeline {
 
         stage("Deploy to Kubernetes") {
             steps {
-                echo 'Deploying to Kubernetes now'
-
+                echo 'Deploying to Kubernetes now and the quto apply is not working'
             }
 
         } 
