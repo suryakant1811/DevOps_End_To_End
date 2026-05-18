@@ -60,20 +60,58 @@ pipeline {
 
     post {
 
-        success {
-            emailext(
-                subject: "✅ Pipeline SUCCESS - Build #${BUILD_NUMBER}",
-                body: "Build #${BUILD_NUMBER} completed successfully.",
-                to: "dummy181103@gmail.com"
-            )
-        }
+    success {
+        emailext(
+            subject: "✅ Pipeline Success | Build #${BUILD_NUMBER}",
+            mimeType: 'text/html',
+            body: """
+                <html>
+                <body style="font-family: Arial, sans-serif;">
+                    <h3 style="color:green;">Pipeline Executed Successfully</h3>
 
-        failure {
-            emailext(
-                subject: "❌ Pipeline FAILED - Build #${BUILD_NUMBER}",
-                body: "Build #${BUILD_NUMBER} FAILED. Check Jenkins logs.",
-                to: "dummy181103@gmail.com"
-            )
-        }
+                    <p>The CI/CD pipeline has completed successfully.</p>
+
+                    <p>
+                    <b>Build:</b> #${BUILD_NUMBER}<br>
+                    <b>Status:</b> SUCCESS<br>
+                    <b>Project:</b> Product Store
+                    </p>
+
+                    <p>Regards,<br>
+                    Jenkins Automation</p>
+                </body>
+                </html>
+            """,
+            to: "surajdwivedi644@gmail.com"
+        )
     }
+
+    failure {
+        emailext(
+            subject: "❌ Pipeline Failed | Build #${BUILD_NUMBER}",
+            mimeType: 'text/html',
+            body: """
+                <html>
+                <body style="font-family: Arial, sans-serif;">
+                    <h3 style="color:red;">Pipeline Execution Failed</h3>
+
+                    <p>The CI/CD pipeline execution failed.</p>
+
+                    <p>
+                    <b>Build:</b> #${BUILD_NUMBER}<br>
+                    <b>Status:</b> FAILED<br>
+                    <b>Project:</b> Product Store
+                    </p>
+
+                    <p>Please review Jenkins logs for details.</p>
+
+                    <p>Regards,<br>
+                    Jenkins Automation</p>
+                </body>
+                </html>
+            """,
+            to: "surajdwivedi644@gmail.com"
+        )
+    }
+}
 }
