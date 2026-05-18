@@ -22,45 +22,58 @@ pipeline {
             }
         }
 
-       stage("Push Images") {
-    
-        steps {
-            withCredentials([
-                usernamePassword(
-                    credentialsId: 'dockerhub_cred',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )
-            ]) 
-            {
-                sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push suryasuraj/psbackend:${BUILD_NUMBER}
-                    docker push suryasuraj/psfrontend:${BUILD_NUMBER}
-                '''
+        stage("Push Images") {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub_cred',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push suryasuraj/psbackend:${BUILD_NUMBER}
+                        docker push suryasuraj/psfrontend:${BUILD_NUMBER}
+                    '''
                 }
             }
-        }  
-
+        }
 
         stage("Deploy to Kubernetes") {
             steps {
                 sh '''
+                    kubectl apply -f kubernetes/
 
-                kubectl apply -f kubernetes/
+                    kubectl set image deployment/backend-deployment \
+                    backend=suryasuraj/psbackend:${BUILD_NUMBER} -n default
 
-                kubectl set image deployment/backend-deployment \
-                backend=suryasuraj/psbackend:${BUILD_NUMBER} -n default
+                    kubectl set image deployment/frontend-deployment \
+                    frontend=suryasuraj/psfrontend:${BUILD_NUMBER} -n default
 
-                kubectl set image deployment/frontend-deployment \
-                frontend=suryasuraj/psfrontend:${BUILD_NUMBER} -n default
-
-                kubectl rollout status deployment/backend-deployment -n default
-
-                kubectl rollout status deployment/frontend-deployment -n default
-            '''
+                    kubectl rollout status deployment/backend-deployment -n default
+                    kubectl rollout status deployment/frontend-deployment -n default
+                '''
+            }
         }
     }
 
+    post {
+
+        success {
+            emailext(
+                subject: "✅ Pipeline SUCCESS - Build #${BUILD_NUMBER}",
+                body: "Build #${BUILD_NUMBER} completed successfully.",
+                to: "dummy181103@gmail.com"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "❌ Pipeline FAILED - Build #${BUILD_NUMBER}",
+                body: "Build #${BUILD_NUMBER} FAILED. Check Jenkins logs.",
+                to: "dummy181103@gmail.com"
+            )
+        }
     }
 }
