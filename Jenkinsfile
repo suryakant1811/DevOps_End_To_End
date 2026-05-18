@@ -62,5 +62,10 @@ pipeline {
         }
     }
 
+    stage("Post-Deployment") {
+        steps {
+            echo "Deployment completed successfully!"
+        }
+
     }
 }
