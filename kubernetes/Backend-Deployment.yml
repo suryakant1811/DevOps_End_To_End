@@ -19,5 +19,10 @@ spec:
       containers:
         - name: backend
           image: suryasuraj/psbackend:latest
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "5000"
           ports:
             - containerPort: 5000

@@ -5,7 +5,11 @@ import { connectDB } from "./config/db.js";
 import path from "path";
 import productRoutes from "./routes/product.route.js";
 
-dotenv.config();
+const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : ".env";
+dotenv.config({ path: envPath });
+if (!process.env.MONGO_URI) {
+  dotenv.config();
+}
 
 const app = express();
 const __dirname = path.resolve();

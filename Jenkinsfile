@@ -47,6 +47,8 @@ pipeline {
             steps {
                 sh '''
 
+                kubectl apply -f kubernetes/
+
                 kubectl set image deployment/backend-deployment \
                 backend=suryasuraj/psbackend:${BUILD_NUMBER} -n default
 
