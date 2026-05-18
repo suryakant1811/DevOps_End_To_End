@@ -47,8 +47,6 @@ pipeline {
             steps {
                 sh '''
 
-                 aws eks update-kubeconfig --region ap-south-1 --name dev-cluster
-
                 kubectl set image deployment/backend-deployment \
                 backend=suryasuraj/psbackend:${BUILD_NUMBER} -n default
 
@@ -61,11 +59,6 @@ pipeline {
             '''
         }
     }
-
-    stage("Post-Deployment") {
-        steps {
-            echo "Deployment completed successfully!"
-        }
 
     }
 }
