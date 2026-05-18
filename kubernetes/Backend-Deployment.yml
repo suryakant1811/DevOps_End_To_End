@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: backend-label
+
+  template:
+    metadata:
+      labels:
+        app: backend-label
+
+    spec:
+      containers:
+        - name: backend
+          image: suryasuraj/psbackend:latest
+          ports:
+            - containerPort: 5000
