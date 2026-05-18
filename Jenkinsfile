@@ -78,7 +78,7 @@ pipeline {
                     </p>
 
                     <p>Regards,<br>
-                    Jenkins Automation</p>
+                    Suryakant Dwivedi</p>
                 </body>
                 </html>
             """,
@@ -106,7 +106,7 @@ pipeline {
                     <p>Please review Jenkins logs for details.</p>
 
                     <p>Regards,<br>
-                    Jenkins Automation</p>
+                    Suryakant Dwivedi</p>
                 </body>
                 </html>
             """,
