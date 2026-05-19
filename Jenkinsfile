@@ -100,7 +100,7 @@ pipeline {
                     <p>
                     <b>Build:</b> #${BUILD_NUMBER}<br>
                     <b>Status:</b> FAILED<br>
-                    <b>Project:</b> Product Store
+                    <b>Project:</b> Online Store 
                     </p>
 
                     <p>Please review Jenkins logs for details.</p>
