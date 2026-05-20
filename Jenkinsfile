@@ -12,6 +12,22 @@ pipeline {
             }
         }
 
+        stage("SonarQube Analysis") {
+            steps {
+                withCredentials([string(credentialsId: 'sonarqube_token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        sonar-scanner \
+                        -Dsonar.projectKey=Online-Store \
+                        -Dsonar.projectName="Online-Store" \
+                        -Dsonar.sources=. \
+                        -Dsonar.exclusions=node_modules/**,dist/**,build/**,.git/** \
+                        -Dsonar.host.url=http://13.235.75.43:9000 \
+                        -Dsonar.token=$SONAR_TOKEN
+                        '''
+        }
+    }
+}
+
         stage("Build Image") {
             steps {
                 echo 'Building backend image'
@@ -21,6 +37,18 @@ pipeline {
                 sh "docker build -f docker/Frontend-Dockerfile -t suryasuraj/psfrontend:${BUILD_NUMBER} frontend"
             }
         }
+
+        stage("Trivy Image Scan") {
+            steps {
+                sh '''
+                    echo "Scanning backend image..."
+                    trivy image --severity HIGH,CRITICAL --exit-code 0 suryasuraj/psbackend:${BUILD_NUMBER}
+
+                    echo "Scanning frontend image..."
+                    trivy image --severity HIGH,CRITICAL --exit-code 0 suryasuraj/psfrontend:${BUILD_NUMBER}
+                '''
+    }
+}
 
         stage("Push Images") {
             steps {
@@ -59,6 +87,7 @@ pipeline {
     }
 
     post {
+
 
     success {
         emailext(
