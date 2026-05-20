@@ -16,15 +16,17 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'sonarqube_token', variable: 'SONAR_TOKEN')]) {
                     sh '''
-                        sonar-scanner \
+                        /opt/sonar-scanner/bin/sonar-scanner \
                         -Dsonar.projectKey=Online-Store \
                         -Dsonar.projectName="Online-Store" \
                         -Dsonar.sources=. \
                         -Dsonar.exclusions=node_modules/**,dist/**,build/**,.git/** \
                         -Dsonar.host.url=http://13.235.75.43:9000 \
                         -Dsonar.token=$SONAR_TOKEN
-                        '''
+                    '''
         }
+    }
+}
     }
 }
 
