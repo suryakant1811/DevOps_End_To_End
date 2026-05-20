@@ -24,11 +24,9 @@ pipeline {
                         -Dsonar.host.url=http://13.235.75.43:9000 \
                         -Dsonar.token=$SONAR_TOKEN
                     '''
+                }
+            }
         }
-    }
-}
-    }
-}
 
         stage("Build Image") {
             steps {
@@ -49,8 +47,8 @@ pipeline {
                     echo "Scanning frontend image..."
                     trivy image --severity HIGH,CRITICAL --exit-code 0 suryasuraj/psfrontend:${BUILD_NUMBER}
                 '''
-    }
-}
+            }
+        }
 
         stage("Push Images") {
             steps {
@@ -90,61 +88,57 @@ pipeline {
 
     post {
 
+        success {
+            emailext(
+                subject: "✅ Pipeline Success | Build #${BUILD_NUMBER}",
+                mimeType: 'text/html',
+                body: """
+                    <html>
+                    <body style="font-family: Arial, sans-serif;">
+                        <h3 style="color:green;">Pipeline Executed Successfully</h3>
 
-    success {
-        emailext(
-            subject: "✅ Pipeline Success | Build #${BUILD_NUMBER}",
-            mimeType: 'text/html',
-            body: """
-                <html>
-                <body style="font-family: Arial, sans-serif;">
-                    <h3 style="color:green;">Pipeline Executed Successfully</h3>
+                        <p>The CI/CD pipeline has completed successfully.</p>
 
-                    <p>The CI/CD pipeline has completed successfully.</p>
+                        <p>
+                        <b>Build:</b> #${BUILD_NUMBER}<br>
+                        <b>Status:</b> SUCCESS<br>
+                        <b>Project:</b> Product Store
+                        </p>
 
-                    <p>
-                    <b>Build:</b> #${BUILD_NUMBER}<br>
-                    <b>Status:</b> SUCCESS<br>
-                    <b>Project:</b> Product Store
-                    </p>
+                        <p>Regards,<br>
+                        Suryakant Dwivedi</p>
+                    </body>
+                    </html>
+                """,
+                to: "surajdwivedi644@gmail.com"
+            )
+        }
 
-                    <p>Regards,<br>
-                    Suryakant Dwivedi</p>
-                </body>
-                </html>
-            """,
-            to: "surajdwivedi644@gmail.com"
-        )
+        failure {
+            emailext(
+                subject: "❌ Pipeline Failed | Build #${BUILD_NUMBER}",
+                mimeType: 'text/html',
+                body: """
+                    <html>
+                    <body style="font-family: Arial, sans-serif;">
+                        <h3 style="color:red;">Pipeline Execution Failed</h3>
+
+                        <p>The CI/CD pipeline execution failed.</p>
+
+                        <p>
+                        <b>Build:</b> #${BUILD_NUMBER}<br>
+                        <b>Status:</b> FAILED<br>
+                        <b>Project:</b> Online Store</p>
+
+                        <p>Please review Jenkins logs for details.</p>
+
+                        <p>Regards,<br>
+                        Suryakant Dwivedi</p>
+                    </body>
+                    </html>
+                """,
+                to: "surajdwivedi644@gmail.com"
+            )
+        }
     }
-
-    failure {
-        emailext(
-            subject: "❌ Pipeline Failed | Build #${BUILD_NUMBER}",
-            mimeType: 'text/html',
-            body: """
-                <html>
-                <body style="font-family: Arial, sans-serif;">
-                    <h3 style="color:red;">Pipeline Execution Failed</h3>
-
-                    <p>The CI/CD pipeline execution failed.</p>
-
-                    <p>
-                    <b>Build:</b> #${BUILD_NUMBER}<br>
-                    <b>Status:</b> FAILED<br>
-                    <b>Project:</b> Online Store 
-                    </p>
-
-                    <p>Please review Jenkins logs for details.</p>
-
-                    <p>Regards,<br>
-                    Suryakant Dwivedi</p>
-                </body>
-                </html>
-            """,
-            to: "surajdwivedi644@gmail.com"
-        )
-    }
-}
-
-
 }
