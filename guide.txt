@@ -1,0 +1,69 @@
+kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring --address 0.0.0.0
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring --address 0.0.0.0
+
+
+Prometheus test
+
+up
+
+Expected:
+
+up{job="prometheus"} 1
+up{job="node-exporter"} 1
+...
+
+
+count(kube_pod_info)
+
+
+Meaning Prometheus sees cluster pods.
+
+count(kube_node_info)
+
+
+Loki test
+
+Run:
+
+{namespace=~".+"}
+
+
+{namespace="default",pod=~"backend.*"}
+
+Frontend logs only:
+
+{namespace="default",pod=~"frontend.*"}
+
+Errors only:
+
+{namespace="default"} |= "error"
+
+Generate fresh logs for Loki:
+
+Open terminal:
+
+while true; do curl http://YOUR_INGRESS_URL/api/products; sleep 1; done
+
+Then run again:
+
+{namespace="default",pod=~"backend.*"}
+
+
+kubectl get hpa
+kubectl get pods
+kubectl top pods
+
+kubectl get hpa -w
+
+kubectl get pods -w
+
+kubectl run cpu-loader-1 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+
+kubectl run cpu-loader-2 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+
+kubectl run cpu-loader-3 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+
+kubectl get hpa
+kubectl get pods
+kubectl top pods
+

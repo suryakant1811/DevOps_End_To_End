@@ -1,28 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
-
+  name: frontend-deployment
 spec:
   replicas: 1
-
   selector:
     matchLabels:
-      app: backend-label
-
+      app: frontend-label
   template:
     metadata:
       labels:
-        app: backend-label
-
+        app: frontend-label
     spec:
       containers:
-        - name: backend
-          image: suryasuraj/psbackend:latest
-          env:
-            - name: NODE_ENV
-              value: "production"
-            - name: PORT
-              value: "5000"
+        - name: frontend
+          image: suryasuraj/psfrontend:latest
+          imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "300m"
+              memory: "128Mi"

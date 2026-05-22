@@ -48,7 +48,22 @@ pipeline {
                     trivy image --severity HIGH,CRITICAL --exit-code 0 suryasuraj/psfrontend:${BUILD_NUMBER}
                 '''
             }
-        }
+        }ls /opt/sonarqube/bin/linux-x86-64
+/home/sonaradmin
+sonarqube  sonarqube-10.3.0.82913.zip
+SonarQube.pid  sonar.sh
+sonaradmin@ip-172-31-1-15:~$ cd /opt/sonarqube/bin/linux-x86-64
+./sonar.sh status
+./sonar.sh start
+sleep 30
+./sonar.sh status
+/usr/bin/java
+SonarQube is running (6689).
+/usr/bin/java
+Starting SonarQube...
+SonarQube is already running.
+/usr/bin/java
+SonarQube is running (6689).
 
         stage("Push Images") {
             steps {
@@ -141,4 +156,5 @@ pipeline {
             )
         }
     }
+    
 }
