@@ -2,67 +2,52 @@ kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring --address 0.0.
 kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring --address 0.0.0.0
 
 
-Prometheus test
 
-up
+# 1. Make sure metrics-server is working
+kubectl top nodes
+kubectl top pods
 
-Expected:
+# 2. Apply your app + HPA files
+kubectl apply -f kubernetes/
 
-up{job="prometheus"} 1
-up{job="node-exporter"} 1
-...
+# 3. Make HPA sensitive for demo
+kubectl patch hpa backend-hpa \
+-p '{"spec":{"metrics":[{"type":"Resource","resource":{"name":"cpu","target":{"type":"Utilization","averageUtilization":10}}}]}}'
 
-
-count(kube_pod_info)
-
-
-Meaning Prometheus sees cluster pods.
-
-count(kube_node_info)
-
-
-Loki test
-
-Run:
-
-{namespace=~".+"}
-
-
-{namespace="default",pod=~"backend.*"}
-
-Frontend logs only:
-
-{namespace="default",pod=~"frontend.*"}
-
-Errors only:
-
-{namespace="default"} |= "error"
-
-Generate fresh logs for Loki:
-
-Open terminal:
-
-while true; do curl http://YOUR_INGRESS_URL/api/products; sleep 1; done
-
-Then run again:
-
-{namespace="default",pod=~"backend.*"}
-
-
+# 4. Check initial HPA state
 kubectl get hpa
 kubectl get pods
 kubectl top pods
 
+# 5. Create load on backend
+kubectl run backend-loader-1 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+
+kubectl run backend-loader-2 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+
+kubectl run backend-loader-3 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+
+# 6. Watch autoscaling
+kubectl get hpa
+kubectl get pods
+kubectl top pods
+
+# Optional live watch
 kubectl get hpa -w
 
-kubectl get pods -w
 
-kubectl run cpu-loader-1 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+# Stop watching first with CTRL + C if using -w
 
-kubectl run cpu-loader-2 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+# 1. Delete load pods
+kubectl delete pod backend-loader-1 backend-loader-2 backend-loader-3 --ignore-not-found
 
-kubectl run cpu-loader-3 --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://backend-service:5000/api/products; done"
+# 2. Reset backend replicas to 1
+kubectl scale deployment backend-deployment --replicas=1
 
+# 3. Reset HPA target back to normal 50%
+kubectl patch hpa backend-hpa \
+-p '{"spec":{"metrics":[{"type":"Resource","resource":{"name":"cpu","target":{"type":"Utilization","averageUtilization":50}}}]}}'
+
+# 4. Final check
 kubectl get hpa
 kubectl get pods
 kubectl top pods
