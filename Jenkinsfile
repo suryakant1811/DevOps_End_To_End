@@ -126,7 +126,7 @@ pipeline {
                     <body style="font-family: Arial, sans-serif;">
                         <h3 style="color:red;">Pipeline Execution Failed</h3>
 
-                        <p>The CI/CD pipeline execution failed.</p>
+                        <p>The CI/CD pipeline execution failed CHECK THEM.</p>
 
                         <p>
                         <b>Build:</b> #${BUILD_NUMBER}<br>
