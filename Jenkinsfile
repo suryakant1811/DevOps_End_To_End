@@ -38,30 +38,18 @@ pipeline {
             }
         }
 
-        // stage("Trivy Image Scan") {
-        //     steps {
-        //         sh '''
-        //             echo "Scanning backend image..."
-        //             trivy image --severity HIGH,CRITICAL --exit-code 0 suryasuraj/psbackend:${BUILD_NUMBER}
-
-        //             echo "Scanning frontend image..."
-        //             trivy image --severity HIGH,CRITICAL --exit-code 0 suryasuraj/psfrontend:${BUILD_NUMBER}
-        //         '''
-        //     }
-        // }
-
         stage("Trivy Image Scan") {
-    steps {
-        sh '''
-            rm -rf /var/lib/jenkins/.cache/trivy
-            rm -rf /tmp/trivy-*
+            steps {
+                sh '''
+                    rm -rf /var/lib/jenkins/.cache/trivy
+                    rm -rf /tmp/trivy-*
 
-            echo "Scanning backend image..."
-            trivy image --severity HIGH,CRITICAL --exit-code 0 --cache-dir /tmp/trivy-cache suryasuraj/psbackend:${BUILD_NUMBER}
+                    echo "Scanning backend image..."
+                    trivy image --severity HIGH,CRITICAL --exit-code 0 --cache-dir /tmp/trivy-cache suryasuraj/psbackend:${BUILD_NUMBER}
 
-            echo "Scanning frontend image..."
-            trivy image --severity HIGH,CRITICAL --exit-code 0 --cache-dir /tmp/trivy-cache suryasuraj/psfrontend:${BUILD_NUMBER}
-        '''
+                    echo "Scanning frontend image..."   
+                    trivy image --severity HIGH,CRITICAL --exit-code 0 --cache-dir /tmp/trivy-cache suryasuraj/psfrontend:${BUILD_NUMBER}
+                '''
     }
 }
 
