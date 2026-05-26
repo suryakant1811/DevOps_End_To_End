@@ -17,11 +17,11 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonarqube_token', variable: 'SONAR_TOKEN')]) {
                     sh '''
                         /opt/sonar-scanner/bin/sonar-scanner \
-                        -Dsonar.projectKey=Online-Store \
-                        -Dsonar.projectName="Online-Store" \
+                        -Dsonar.projectKey=devops \
+                        -Dsonar.projectName="devops" \
                         -Dsonar.sources=. \
                         -Dsonar.exclusions=node_modules/**,dist/**,build/**,.git/** \
-                        -Dsonar.host.url=http://13.235.75.43:9000 \
+                        -Dsonar.host.url=http://65.2.82.46:9000 \
                         -Dsonar.token=$SONAR_TOKEN
                     '''
                 }
@@ -54,7 +54,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub_cred',
+                        credentialsId: 'dokcerhub_cred',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS'
                     )
